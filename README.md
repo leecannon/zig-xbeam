@@ -12,7 +12,11 @@ Only the following types are implemented:
 #### Utilities
 
 * `xbeam.utils.Backoff` - for exponential backoff in spin loops.
-* `xbeam.utils.CACHE_LINE_LENGTH` - replacement for the rust `CachePadded`, just use `align(xbeam.utils.CACHE_LINE_LENGTH)`
+* `xbeam.utils.CACHE_LINE_LENGTH` - replacement for the rust `CachePadded`, used like this:
+
+    ```zig 
+    var aligned: usize align(xbeam.utils.CACHE_LINE_LENGTH) = 0;
+    ```
  
 ### Contributions are welcome!
 
