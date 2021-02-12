@@ -23,6 +23,13 @@ pub const CACHE_LINE_LENGTH: usize = switch (std.builtin.cpu.arch) {
     else => 64,
 };
 
+pub fn loopHint(iterations: usize) void {
+    var i = iterations;
+    while (i != 0) : (i -= 1) {
+        @call(.{ .modifier = .always_inline }, std.Thread.spinLoopHint, .{});
+    }
+}
+
 pub const Backoff = struct {
     const SPIN_LIMIT = 6;
     const YIELD_LIMIT = 10;
@@ -45,15 +52,14 @@ pub const Backoff = struct {
             break :blk step;
         } else SPIN_LIMIT;
 
-        // TODO: Pull request to break this out of `SpinLock`
-        std.SpinLock.loopHint(spins);
+        loopHint(spins);
     }
 
     pub fn snooze(self: *Backoff) void {
         const step = self.step;
 
         if (step <= SPIN_LIMIT) {
-            std.SpinLock.loopHint(@as(usize, 1) << step);
+            loopHint(@as(usize, 1) << step);
         } else {
             yield();
         }
@@ -74,15 +80,15 @@ fn yield() void {
     // a nice sweet spot. Posix systems on the other hand,
     // especially linux, perform better by yielding the thread.
     switch (builtin.os.tag) {
-        .windows => std.SpinLock.loopHint(400),
+        .windows => loopHint(400),
         .freestanding => {
             if (comptime @hasDecl(std.os, "sched_yield")) {
-                std.os.sched_yield() catch std.SpinLock.loopHint(1);
+                std.os.sched_yield() catch std.Thread.spinLoopHint();
             } else {
-                std.SpinLock.loopHint(400);
+                loopHint(400);
             }
         },
-        else => std.os.sched_yield() catch std.SpinLock.loopHint(1),
+        else => std.os.sched_yield() catch std.Thread.spinLoopHint(),
     }
 }
 
