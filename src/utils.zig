@@ -4,14 +4,16 @@ const builtin = @import("builtin");
 /// In concurrent programming, sometimes it is desirable to make sure commonly accessed pieces of
 /// data are not placed into the same cache line. Updating an atomic value invalidates the whole
 /// cache line it belongs to, which makes the next access to the same cache line slower for other
-/// CPU cores.
-/// Use `align(utils.CACHE_LINE_LENGTH)` to ensure updating one piece of data doesn't invalidate other cached data.
+/// CPU cores. Use `CachePadded` to ensure updating one piece of data doesn't invalidate other
+/// cached data.
 ///
 /// # Size and alignment
 ///
 /// Cache lines are assumed to be N bytes long, depending on the architecture:
 ///
-/// * On x86-64 and aarch64, N = 128.
+/// * On x86-64, aarch64, and powerpc64, N = 128.
+/// * On arm, mips, mips64, and riscv64, N = 32.
+/// * On s390x, N = 256.
 /// * On all others, N = 64.
 ///
 /// Note that N is just a reasonable guess and is not guaranteed to match the actual cache line
@@ -19,7 +21,9 @@ const builtin = @import("builtin");
 /// prefetcher is pulling pairs of 64-byte cache lines at a time, so we pessimistically assume that
 /// cache lines are 128 bytes long.
 pub const CACHE_LINE_LENGTH: usize = switch (std.builtin.cpu.arch) {
-    .x86_64, .aarch64 => 128,
+    .x86_64, .aarch64, .powerpc64 => 128,
+    .arm, .mips, .mips64, .riscv64 => 32,
+    .s390x => 256,
     else => 64,
 };
 
