@@ -71,7 +71,7 @@ pub const Backoff = struct {
         if (step < YIELD_LIMIT) self.step += 1;
     }
 
-    test "" {
+    comptime {
         std.testing.refAllDecls(@This());
     }
 };
@@ -96,6 +96,6 @@ fn yield() void {
     }
 }
 
-test "" {
+comptime {
     std.testing.refAllDecls(@This());
 }

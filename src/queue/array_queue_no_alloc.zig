@@ -228,13 +228,13 @@ pub fn ArrayQueueNoAlloc(comptime T: type, comptime size: usize) type {
             }
         }
 
-        test "" {
+        comptime {
             std.testing.refAllDecls(@This());
         }
     };
 }
 
-test "" {
+comptime {
     std.testing.refAllDecls(@This());
 }
 

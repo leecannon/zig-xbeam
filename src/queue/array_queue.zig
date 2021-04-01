@@ -234,13 +234,13 @@ pub fn ArrayQueue(comptime T: type) type {
             }
         }
 
-        test "" {
+        comptime {
             std.testing.refAllDecls(@This());
         }
     };
 }
 
-test "" {
+comptime {
     std.testing.refAllDecls(@This());
 }
 

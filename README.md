@@ -1,6 +1,6 @@
 # zig-xbream
 
-This repo is a very partial re-implementation of the rust crate [crossbeam](https://github.com/crossbeam-rs/crossbeam).
+This repo is a *very* partial (pull requests welcome) re-implementation of the rust crate [crossbeam](https://github.com/crossbeam-rs/crossbeam).
 
 Only the following types are implemented:
 

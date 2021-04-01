@@ -5,6 +5,6 @@ pub const ArrayQueueNoAlloc = @import("queue/array_queue_no_alloc.zig").ArrayQue
 /// a bounded MPMC queue that allocates a fixed-capacity buffer on construction.
 pub const ArrayQueue = @import("queue/array_queue.zig").ArrayQueue;
 
-test "" {
+comptime {
     @import("std").testing.refAllDecls(@This());
 }
