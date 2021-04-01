@@ -1,1 +1,1 @@
-2021-03-04 e1d646005d71f41b2eef7170683aad4285d47403 https://github.com/crossbeam-rs/crossbeam
+2021-03-26 06d77d35ce7165f04d7027608a99331a2e3e0f9c https://github.com/crossbeam-rs/crossbeam

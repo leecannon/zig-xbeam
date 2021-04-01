@@ -65,7 +65,6 @@ pub fn ArrayQueueNoAlloc(comptime T: type, comptime size: usize) type {
         },
 
         pub fn init() Self {
-            // comptime is so nice :)
             return .{};
         }
 
