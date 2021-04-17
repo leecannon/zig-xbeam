@@ -3,7 +3,7 @@
 //! Source:
 //!   - <http://www.1024cores.net/home/lock-free-algorithms/queues/bounded-mpmc-queue>
 
-usingnamespace @import("../index.zig");
+const xbeam = @import("../index.zig");
 const std = @import("std");
 
 const AtomicUsize = std.atomic.Int(usize);
@@ -42,7 +42,7 @@ pub fn ArrayQueueNoAlloc(comptime T: type, comptime size: usize) type {
         /// single `usize`. The lower bits represent the index, while the upper bits represent the lap.
         ///
         /// Elements are popped from the head of the queue.
-        head: AtomicUsize align(utils.CACHE_LINE_LENGTH) = AtomicUsize.init(0),
+        head: AtomicUsize align(xbeam.utils.CACHE_LINE_LENGTH) = AtomicUsize.init(0),
 
         /// The tail of the queue.
         ///
@@ -50,7 +50,7 @@ pub fn ArrayQueueNoAlloc(comptime T: type, comptime size: usize) type {
         /// single `usize`. The lower bits represent the index, while the upper bits represent the lap.
         ///
         /// Elements are pushed into the tail of the queue.
-        tail: AtomicUsize align(utils.CACHE_LINE_LENGTH) = AtomicUsize.init(0),
+        tail: AtomicUsize align(xbeam.utils.CACHE_LINE_LENGTH) = AtomicUsize.init(0),
 
         /// The buffer holding slots.
         buffer: [CAPACITY]Slot = comptime blk: {
@@ -71,7 +71,7 @@ pub fn ArrayQueueNoAlloc(comptime T: type, comptime size: usize) type {
         /// Attempts to push an element into the queue.
         /// If the queue is full, returns an error.
         pub fn push(self: *Self, value: T) !void {
-            var backoff = utils.Backoff.init();
+            var backoff = xbeam.utils.Backoff.init();
             var tail = self.tail.load(.Unordered);
 
             while (true) {
@@ -128,7 +128,7 @@ pub fn ArrayQueueNoAlloc(comptime T: type, comptime size: usize) type {
         /// Attempts to pop an element from the queue.
         /// If the queue is empty, `null` is returned.
         pub fn pop(self: *Self) ?T {
-            var backoff = utils.Backoff.init();
+            var backoff = xbeam.utils.Backoff.init();
             var head = self.head.load(.Unordered);
 
             while (true) {

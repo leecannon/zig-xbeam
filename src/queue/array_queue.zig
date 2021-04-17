@@ -3,7 +3,7 @@
 //! Source:
 //!   - <http://www.1024cores.net/home/lock-free-algorithms/queues/bounded-mpmc-queue>
 
-usingnamespace @import("../index.zig");
+const xbeam = @import("../index.zig");
 const std = @import("std");
 
 const AtomicUsize = std.atomic.Int(usize);
@@ -40,7 +40,7 @@ pub fn ArrayQueue(comptime T: type) type {
         /// single `usize`. The lower bits represent the index, while the upper bits represent the lap.
         ///
         /// Elements are popped from the head of the queue.
-        head: AtomicUsize align(utils.CACHE_LINE_LENGTH) = AtomicUsize.init(0),
+        head: AtomicUsize align(xbeam.utils.CACHE_LINE_LENGTH) = AtomicUsize.init(0),
 
         /// The tail of the queue.
         ///
@@ -48,7 +48,7 @@ pub fn ArrayQueue(comptime T: type) type {
         /// single `usize`. The lower bits represent the index, while the upper bits represent the lap.
         ///
         /// Elements are pushed into the tail of the queue.
-        tail: AtomicUsize align(utils.CACHE_LINE_LENGTH) = AtomicUsize.init(0),
+        tail: AtomicUsize align(xbeam.utils.CACHE_LINE_LENGTH) = AtomicUsize.init(0),
 
         /// The buffer holding slots.
         buffer: []Slot,
@@ -75,7 +75,7 @@ pub fn ArrayQueue(comptime T: type) type {
         pub fn push(self: *Self, value: T) !void {
             const one_lap = self.one_lap;
 
-            var backoff = utils.Backoff.init();
+            var backoff = xbeam.utils.Backoff.init();
             var tail = self.tail.load(.Unordered);
 
             while (true) {
@@ -134,7 +134,7 @@ pub fn ArrayQueue(comptime T: type) type {
         pub fn pop(self: *Self) ?T {
             const one_lap = self.one_lap;
 
-            var backoff = utils.Backoff.init();
+            var backoff = xbeam.utils.Backoff.init();
             var head = self.head.load(.Unordered);
 
             while (true) {
