@@ -244,8 +244,8 @@ test "distinct buffers" {
     q1.buffer[0].value = 10;
     q2.buffer[0].value = 20;
 
-    std.testing.expectEqual(@as(usize, 10), q1.buffer[0].value);
-    std.testing.expectEqual(@as(usize, 20), q2.buffer[0].value);
+    try std.testing.expectEqual(@as(usize, 10), q1.buffer[0].value);
+    try std.testing.expectEqual(@as(usize, 20), q2.buffer[0].value);
 }
 
 test "push" {
@@ -254,53 +254,53 @@ test "push" {
     try q.push(10);
     try q.push(20);
 
-    std.testing.expectEqual(@as(usize, 10), q.buffer[0].value);
-    std.testing.expectEqual(@as(usize, 20), q.buffer[1].value);
+    try std.testing.expectEqual(@as(usize, 10), q.buffer[0].value);
+    try std.testing.expectEqual(@as(usize, 20), q.buffer[1].value);
 
-    std.testing.expectError(error.QueueIsFull, q.push(0));
+    try std.testing.expectError(error.QueueIsFull, q.push(0));
 }
 
 test "isEmpty" {
     var q = ArrayQueueNoAlloc(usize, 2).init();
 
-    std.testing.expectEqual(true, q.isEmpty());
+    try std.testing.expectEqual(true, q.isEmpty());
     try q.push(10);
-    std.testing.expectEqual(false, q.isEmpty());
+    try std.testing.expectEqual(false, q.isEmpty());
 
-    std.testing.expectEqual(@as(usize, 10), q.pop().?);
-    std.testing.expectEqual(true, q.isEmpty());
+    try std.testing.expectEqual(@as(usize, 10), q.pop().?);
+    try std.testing.expectEqual(true, q.isEmpty());
 }
 
 test "isFull" {
     var q = ArrayQueueNoAlloc(usize, 2).init();
 
-    std.testing.expectEqual(false, q.isFull());
+    try std.testing.expectEqual(false, q.isFull());
     try q.push(10);
-    std.testing.expectEqual(false, q.isFull());
+    try std.testing.expectEqual(false, q.isFull());
     try q.push(20);
-    std.testing.expectEqual(true, q.isFull());
+    try std.testing.expectEqual(true, q.isFull());
 
-    std.testing.expectEqual(@as(usize, 10), q.pop().?);
+    try std.testing.expectEqual(@as(usize, 10), q.pop().?);
 
-    std.testing.expectEqual(false, q.isFull());
+    try std.testing.expectEqual(false, q.isFull());
 }
 
 test "len" {
     var q = ArrayQueueNoAlloc(usize, 2).init();
 
-    std.testing.expectEqual(@as(usize, 0), q.len());
+    try std.testing.expectEqual(@as(usize, 0), q.len());
 
     try q.push(10);
-    std.testing.expectEqual(@as(usize, 1), q.len());
+    try std.testing.expectEqual(@as(usize, 1), q.len());
 
     try q.push(20);
-    std.testing.expectEqual(@as(usize, 2), q.len());
+    try std.testing.expectEqual(@as(usize, 2), q.len());
 
-    std.testing.expectEqual(@as(usize, 10), q.pop().?);
-    std.testing.expectEqual(@as(usize, 1), q.len());
+    try std.testing.expectEqual(@as(usize, 10), q.pop().?);
+    try std.testing.expectEqual(@as(usize, 1), q.len());
 
-    std.testing.expectEqual(@as(usize, 20), q.pop().?);
-    std.testing.expectEqual(@as(usize, 0), q.len());
+    try std.testing.expectEqual(@as(usize, 20), q.pop().?);
+    try std.testing.expectEqual(@as(usize, 0), q.len());
 }
 
 test "pop" {
@@ -308,17 +308,17 @@ test "pop" {
 
     try q.push(10);
     try q.push(20);
-    std.testing.expectError(error.QueueIsFull, q.push(100));
+    try std.testing.expectError(error.QueueIsFull, q.push(100));
 
-    std.testing.expectEqual(@as(usize, 10), q.pop().?);
-    std.testing.expectEqual(@as(usize, 20), q.pop().?);
-    std.testing.expect(q.pop() == null);
+    try std.testing.expectEqual(@as(usize, 10), q.pop().?);
+    try std.testing.expectEqual(@as(usize, 20), q.pop().?);
+    try std.testing.expect(q.pop() == null);
 
     try q.push(0);
     try q.push(1);
-    std.testing.expectError(error.QueueIsFull, q.push(100));
+    try std.testing.expectError(error.QueueIsFull, q.push(100));
 
-    std.testing.expectEqual(@as(usize, 0), q.pop().?);
-    std.testing.expectEqual(@as(usize, 1), q.pop().?);
-    std.testing.expect(q.pop() == null);
+    try std.testing.expectEqual(@as(usize, 0), q.pop().?);
+    try std.testing.expectEqual(@as(usize, 1), q.pop().?);
+    try std.testing.expect(q.pop() == null);
 }

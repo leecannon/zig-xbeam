@@ -1,1 +1,2 @@
-2021-03-26 06d77d35ce7165f04d7027608a99331a2e3e0f9c https://github.com/crossbeam-rs/crossbeam
+https://github.com/crossbeam-rs/crossbeam
+    - array_queue: https://github.com/crossbeam-rs/crossbeam/blob/master/crossbeam-queue/src/array_queue.rs 33e4c64a5f33c1e146c228d36ff7dc9f9f37a71d
