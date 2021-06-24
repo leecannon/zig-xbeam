@@ -6,7 +6,7 @@
 const xbeam = @import("../index.zig");
 const std = @import("std");
 
-const AtomicUsize = std.atomic.Int(usize);
+const AtomicUsize = std.atomic.Atomic(usize);
 
 /// A bounded multi-producer multi-consumer queue.
 ///
@@ -100,7 +100,7 @@ pub fn ArrayQueue(comptime T: type) type {
                     };
 
                     // try moving the tail.
-                    if (@cmpxchgWeak(usize, &self.tail.unprotected_value, tail, new_tail, .SeqCst, .Monotonic)) |t| {
+                    if (@cmpxchgWeak(usize, &self.tail.value, tail, new_tail, .SeqCst, .Monotonic)) |t| {
                         // failed to swap
                         tail = t;
                         backoff.spin();
@@ -159,7 +159,7 @@ pub fn ArrayQueue(comptime T: type) type {
                     };
 
                     // try moving the head.
-                    if (@cmpxchgWeak(usize, &self.head.unprotected_value, head, new_head, .SeqCst, .Monotonic)) |h| {
+                    if (@cmpxchgWeak(usize, &self.head.value, head, new_head, .SeqCst, .Monotonic)) |h| {
                         // failed to swap
                         head = h;
                         backoff.spin();

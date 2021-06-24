@@ -30,7 +30,7 @@ pub const CACHE_LINE_LENGTH: usize = switch (std.builtin.cpu.arch) {
 pub fn loopHint(iterations: usize) void {
     var i = iterations;
     while (i != 0) : (i -= 1) {
-        @call(.{ .modifier = .always_inline }, std.Thread.spinLoopHint, .{});
+        @call(.{ .modifier = .always_inline }, std.atomic.spinLoopHint, .{});
     }
 }
 
@@ -87,12 +87,12 @@ fn yield() void {
         .windows => loopHint(400),
         .freestanding => {
             if (comptime @hasDecl(std.os, "sched_yield")) {
-                std.os.sched_yield() catch std.Thread.spinLoopHint();
+                std.os.sched_yield() catch std.atomic.spinLoopHint();
             } else {
                 loopHint(400);
             }
         },
-        else => std.os.sched_yield() catch std.Thread.spinLoopHint(),
+        else => std.os.sched_yield() catch std.atomic.spinLoopHint(),
     }
 }
 
